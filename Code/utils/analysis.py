@@ -51,8 +51,8 @@ def analyse_topics(text: str, api_token: str, categories: List[str]) -> Dict:
             labels = [elem.label for elem in result]
             scores = [elem.score for elem in result]
         else:
-            #st.error("Unexpected API response format: " + str(result))
-            st.error("Unfortunately the Hugging Face inference API is down. Please try again later.")
+            st.error("Unexpected API response format: " + str(result))
+            
             return None
         
         return {
@@ -61,7 +61,8 @@ def analyse_topics(text: str, api_token: str, categories: List[str]) -> Dict:
             "scores": scores[:3]  
         }
     except Exception as e:
-        st.error(f"Topic Analysis Error: {str(e)}")
+        #st.error(f"Topic Analysis Error: {str(e)}")
+        st.error("Unfortunately the Hugging Face inference API server is having issues errors might occur.")
         return None
 
 
