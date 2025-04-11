@@ -220,10 +220,10 @@ class Bluesky_Analyser(Platform_Analyser):
             
             with tabs[0]:
                 self.run_profile_overview(user_profile_data)
-          #  with tabs[1]:
-          #      self.run_network_analysis(handle)
-          #  with tabs[2]:
-             #   self.run_follower_analysis(handle)
+            with tabs[1]:
+                self.run_network_analysis(handle)
+            with tabs[2]:
+                self.run_follower_analysis(handle)
         else:
             st.info("Enter a Bluesky handle to begin analysis")
 
