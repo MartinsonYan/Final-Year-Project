@@ -45,7 +45,7 @@ def analyse_topics(text: str, api_token: str, categories: List[str]) -> Dict:
         )
         
         # Debug: show the raw response structure
-        st.write("Raw API response:", result)
+        #st.write("Raw API response:", result)
         
         if isinstance(result, list) and hasattr(result[0], "label"):
             labels = [elem.label for elem in result]
