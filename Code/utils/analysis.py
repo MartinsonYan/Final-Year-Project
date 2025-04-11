@@ -75,7 +75,7 @@ def group_analyse_topics(posts: List[str], api_token: str) -> List[Dict]:
     ]
     
     analysed = []
-    max_posts = min(len(posts), 10) 
+    max_posts = min(len(posts), 1) 
     
     for i, post in enumerate(posts[:max_posts]):   
         analysis = analyse_topics(post, api_token, categories)
