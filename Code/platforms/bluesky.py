@@ -180,7 +180,7 @@ class Bluesky_Analyser(Platform_Analyser):
                 existing_dids = {node["id"] for node in network["nodes"]}
                 missing_dids = interactor_dids - existing_dids
 
-                #Attepmts to obtain handles outside of analysis scope but seems to be some issues with the API so usual output will be unknown
+                #Attepmts to obtain handles outside of analysis scope most of the time it wont work due to the unknown handles being outside the network size
                 missing_dids_list = list(missing_dids)[:50]  
                 for did in missing_dids_list:
                     try:
@@ -220,10 +220,10 @@ class Bluesky_Analyser(Platform_Analyser):
             
             with tabs[0]:
                 self.run_profile_overview(user_profile_data)
-            with tabs[1]:
-               self.run_network_analysis(handle)
-            with tabs[2]:
-                self.run_follower_analysis(handle)
+          #  with tabs[1]:
+          #      self.run_network_analysis(handle)
+          #  with tabs[2]:
+             #   self.run_follower_analysis(handle)
         else:
             st.info("Enter a Bluesky handle to begin analysis")
 
@@ -278,6 +278,8 @@ class Bluesky_Analyser(Platform_Analyser):
             for result in topic_results:
                 for topic in result.get('topics', []):
                     topic_counts[topic] += 1
+            handle = data['profile']['Handle']
+            st.session_state[f"user_topic_counts_{handle}"] = topic_counts
             
             st.write("Most Frequent Topics")
             
@@ -303,16 +305,6 @@ class Bluesky_Analyser(Platform_Analyser):
             else:
                 st.info("Too little topics to visualise")
             
-            st.write("#Example Posts by Topic")
-            topic_examples = defaultdict(list)
-            for result in topic_results:
-                if result.get('topics') and result.get('text'):
-                    main_topic = result['topics'][0]
-                    topic_examples[main_topic].append(result['text'][:100] + "...")
-            
-            for topic, examples in topic_examples.items():
-                with st.expander(f"{topic} ({len(examples)} posts)"):
-                    st.write("\n\n".join(examples[:3]))  # right now shows 3 examples potentially show more
         else:
             st.warning("No topics could be identified in these posts")           
             
@@ -395,7 +387,7 @@ class Bluesky_Analyser(Platform_Analyser):
         }
     def run_follower_analysis(self, handle):
         st.subheader("Follower Interest Analysis")
-        st.info("This analysis looks at post pattersn and topics to find shared interest.")
+        st.info("This analysis looks at post topics to find shared interest.")
         
         with st.spinner("Analysing interests... (may take some time)"):
             shared_interests = self.analyse_shared_interests(handle)

@@ -29,5 +29,6 @@ if st.session_state.selected_platform == "bluesky":
 
 
 if st.button("Analyse Another Platform"):
-    del st.session_state.selected_platform
+    if 'selected_platform' in st.session_state:
+        del st.session_state.selected_platform
     st.rerun()

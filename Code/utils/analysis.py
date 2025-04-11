@@ -41,27 +41,26 @@ def analyse_topics(text: str, api_token: str, categories: List[str]) -> Dict:
         result = client.zero_shot_classification(
             text,
             candidate_labels=categories,
-            multi_label=True
+            multi_label= True
         )
         
         # Debug: show the raw response structure
-        #st.write("Raw API response:", result)
+        st.write("Raw API response:", result)
         
         if isinstance(result, list) and hasattr(result[0], "label"):
             labels = [elem.label for elem in result]
             scores = [elem.score for elem in result]
         else:
             st.error("Unexpected API response format: " + str(result))
-            
             return None
         
         return {
             "text": text,
-            "topics": labels[:3], 
+            "topics": labels[:3], #change both either 0 being the top topic of the post.
             "scores": scores[:3]  
         }
     except Exception as e:
-        #st.error(f"Topic Analysis Error: {str(e)}")
+       #  st.error(f"Topic Analysis Error: {str(e)}")
         st.error("Unfortunately the Hugging Face inference API server is having issues errors might occur.")
         return None
 
@@ -520,8 +519,9 @@ def create_network_dashboard(network_data, analysis_results):
     ax.set_ylabel("Count")
     st.pyplot(fig)
     
-    # display top interactors if available
+    
     st.write("### Most Frequent Interactors")
+    st.info("Please note if you do see unknown users it is because the current network size does not contain the information of the user.")
     df_interactors = pd.DataFrame(analysis_results["interaction_patterns"]["top_interactors"])
     
     df_interactors = df_interactors[["display_name", "handle", "interaction_count"]]
@@ -530,13 +530,19 @@ def create_network_dashboard(network_data, analysis_results):
     st.dataframe(df_interactors)
     
     # Display mutual connections
-    st.subheader("MutualConnections")
-    df_mutual = pd.DataFrame(analysis_results["mutual_connections"])
+    st.subheader("Mutual Connections")
+     # will check if there are even any mutual connections within the analysed network.
 
-    df_mutual = df_mutual[["display_name", "handle"]]
-    df_mutual.columns = ["Name", "Handle"]
+    if analysis_results["mutual_connections"]:
         
-    st.dataframe(df_mutual)
+        df_mutual = pd.DataFrame(analysis_results["mutual_connections"])
+        
+        df_mutual = df_mutual[["display_name", "handle"]]
+        df_mutual.columns = ["Name", "Handle"]
+        st.dataframe(df_mutual)
+    else:
+        st.info("No mutual connections were found within the network size scope.")
+
 
 
 def visualize_shared_interests(shared_interests_data):
