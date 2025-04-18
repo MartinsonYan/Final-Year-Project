@@ -137,7 +137,7 @@ def generate_account_summary(userProfile: dict, posts: list, topic_results: list
 
 
     
-    client = InferenceClient(token=api_token, model="mistralai/Mistral-7B-Instruct-v0.2")
+    client = InferenceClient(token=api_token, model="TheBloke/Mistral-7B-Instruct-v0.2-GPTQ")
     result = client.text_generation(prompt, max_new_tokens=250, temperature=0.7)
 
     
@@ -617,7 +617,7 @@ def analyse_content_uniquenesses(posts: list, api_token: str) -> dict:
         "Uniqueness Score: [1-10]\n"
         "Analysis: [your analysis here]"
     )
-    client = InferenceClient(token=api_token, model="mistralai/Mistral-7B-Instruct-v0.2")
+    client = InferenceClient(token=api_token, model="TheBloke/Mistral-7B-Instruct-v0.2-GPTQ")
     result = client.text_generation(prompt, max_new_tokens=300, temperature=0.7)
 
     # Parse the result to extract score and analysis
