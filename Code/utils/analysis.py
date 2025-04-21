@@ -75,7 +75,7 @@ def group_analyse_topics(posts: List[str], api_token: str) -> List[Dict]:
     ]
     
     analysed = []
-    max_posts = min(len(posts), 1) 
+    max_posts = min(len(posts), 0) 
     
     for i, post in enumerate(posts[:max_posts]):   
         analysis = analyse_topics(post, api_token, categories)
@@ -110,21 +110,21 @@ def generate_account_summary(userProfile: dict, posts: list, topic_results: list
     avg_reposts = sum(post.get("Reposts", 0) for post in posts) / len(posts) if posts else 0
     
     prompt = (
-        "You are an expert social media analyst. Analyse this Bluesky account and provide a detailed and insightful summary.\n\n"
-        "## EXAMPLE ACCOUNT:\n"
-        "Name: TechLover\n"
-        "Description: Sharing my tech journey and coding adventures\n"
+        "You are a high level social media analyst. Analyse the given Bluesky Account and provide a detailed summary.\n\n"
+        "EXAMPLE ACCOUNT:\n"
+        "Name: FootballLover29\n"
+        "Description: Sharing my football opinions and experiences watching the beautiful game\n"
         "Followers: 500\n"
         "Posts: 350\n"
         "Sample Posts:\n"
-        "- \"Just got the new MacBook , and the performance is insane!\"\n"
-        "- \"Working on a new Python project to help with my coding skills\"\n"
-        "- \"Here's my take on the latest AI developments in the industry\"\n"
-        "Top Topics: Technology, Personal life\n"
+        "- \"Just saw Arsenal beat Real madrid, what a dominant performance!\"\n"
+        "- \"Surely raphinha is in contention for the balon d'or\"\n"
+        "- \"Here are my top contenders to win this seasons UCL\"\n"
+        "Top Topics: Sports, Personal Life\n"
         "Avg Engagement: 25 likes, 5 reposts\n\n"
-        "## EXAMPLE SUMMARY:\n"
-        "TechLover is a technology-focused Bluesky account with a moderate following of 500 users. They primarily share content about personal tech experiences, coding projects (especially Python), and AI industry trends. Their posts receive good engagement, suggesting they're a respected voice in their tech niche. The account appears to be run by a tech professional or enthusiast who balances personal tech experiences with more educational content.\n\n"
-        "## ACTUAL ACCOUNT:\n"
+        " EXAMPLE SUMMARY:\n"
+        "FoorballLover29 is a sports based specfically football focused Bluesky account with a moderate following of 500, they mainly share content on the football season and their thoughts on it. Their posts have good engagement suggesting their voice in their football niche is respected. The account appears to be run by a football enthusiast who personal experience with opinions. \n\n"
+        "ACTUAL ACCOUNT:\n"
         f"Name: {name}\n"
         f"Description: {profile_desc}\n"
         f"Followers: {followers}\n"
@@ -132,24 +132,19 @@ def generate_account_summary(userProfile: dict, posts: list, topic_results: list
         f"Sample Posts:\n{sample_posts}\n"
         f"Top Topics: {', '.join(top_topics)}\n"
         f"Avg Engagement: {avg_likes:.1f} likes, {avg_reposts:.1f} reposts\n\n"
-        "## ACCOUNT SUMMARY (Write 3-5 sentences that capture the essence of this account, their content focus, audience, and style):"
+        "ACCOUNT SUMMARY (Write 3-5 sentences that discusses the idea of this account, who they are, their focus, audience and style):\n" 
+        "Summary:\n"
     )
 
 
     
-    client = InferenceClient(token=api_token, model="TheBloke/Mistral-7B-Instruct-v0.2-GPTQ")
+    client = InferenceClient(token=api_token, model="mistralai/Mistral-7B-Instruct-v0.3")
     result = client.text_generation(prompt, max_new_tokens=250, temperature=0.7)
 
     
-
-    if isinstance(result, dict):
-        summary = result.get("generated_text", "")
-    else:
-        summary = result
-    
-    # Clean up the summary if needed
-    if "## ACCOUNT SUMMARY" in summary:
-        summary = summary.split("## ACCOUNT SUMMARY")[1].strip()
+    summary = result.strip()
+    if "Summary:" in summary:
+        summary = summary.split("Summary:", 1)[-1].strip()
     
     return summary
 
@@ -603,30 +598,38 @@ def analyse_content_uniquenesses(posts: list, api_token: str) -> dict:
     content_posts = [p['Text'] for p in posts[:10]]
     content_text = "\n- \"" + "\"\n- \"".join(content_posts) + "\""
     prompt = (
-        "As a social media content analyst, evaluate the uniqueness and distinctiveness of the following "
+        "As a high level social media content analyst, analyse the uniqueness of the following "
         "social media posts from a single user. Consider:\n"
-        "1. How original is their perspective compared to common viewpoints?\n"
-        "2. Do they use distinctive language, terminology, or phrasing?\n"
-        "3. Are they discussing niche topics or mainstream subjects?\n"
-        "4. Is their writing style unique or does it follow common patterns?\n\n"
+        "1. Comparing to common viewpoints how original is their perspective?\n"
+        "2. Is the terminology, phrasing or language dinstictive?\n"
+        "3. With the topics they talk about are they nich or mainstream?\n"
+        "4. Is they way they write unique or do they follow commmon patterns?\n\n"
         f"POSTS TO ANALYZE:\n{content_text}\n\n"
-        "First, rate the overall content uniqueness on a scale of 1-10, where 1 is extremely common "
-        "content and 10 is highly distinctive and original.\n\n"
-        "Then provide a brief analysis (3-4 sentences) of what makes this user's content unique or common.\n\n"
+        "First, rate the content uniqueness where 1 is extremely common rate the overall content uniquness from 1-10 where 1 is extremely "
+        "common and 10 is unique and original .\n\n"
+        "Then give a consise analysis (3-4 sentences) on what makes the users content common or unique.\n\n"
         "Output format:\n"
         "Uniqueness Score: [1-10]\n"
-        "Analysis: [your analysis here]"
+        "Analysis: [your analysis here]:\n"
+        
     )
-    client = InferenceClient(token=api_token, model="TheBloke/Mistral-7B-Instruct-v0.2-GPTQ")
+    client = InferenceClient(token=api_token, model="mistralai/Mistral-7B-Instruct-v0.3")
     result = client.text_generation(prompt, max_new_tokens=300, temperature=0.7)
 
     # Parse the result to extract score and analysis
     results_text = result
-    score_result = re.search(r"Uniqueness Score:\s*(\d+(?:\.\d+)?)", results_text)
-    score = float(score_result.group(1))
     
-    analysis_result = re.search(r"Analysis:(.*?)(?:\n\n|$)", results_text, re.DOTALL)
-    analysis = analysis_result.group(1).strip() 
+    score_result = re.search(r"Uniqueness Score:?\s*(\d+(?:\.\d+)?)", results_text)
+    score = float(score_result.group(1)) if score_result else 5  
+    
+
+    analysis_result = re.search(r"Analysis:(.+?)(?=\n\n|\Z)", results_text, re.DOTALL)
+    
+    analysis = analysis_result.group(1).strip()
+
+    
+    # Remove any placeholder text
+    analysis = analysis.replace("[your analysis here]", "").replace("[your detailed analysis here]", "").strip()
     
     return {
         "score": score,
