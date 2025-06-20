@@ -6,11 +6,8 @@ Features:
 Profile Analysis:
 
 Profile Summaries: Create detailed summaries about user accounts using HuggingFace AI models.
-
 Content Uniqueness Scoring: Determine the uniqueness and distinctiveness of user content From 1-10, 1 being not unique and distinctive and 10 being highly unique and distinctive.
-
 Topic Classification: Uses zero-shot classification to help categorise posts into predefined topics. 
-
 Visual Topic Distribution: Bar Chart to showcase content themes.
 
 Network Analysis:
@@ -21,11 +18,13 @@ Mutual Connection Analysis: Discover bidirectional relationships within the netw
 Influence Metrics: Analyze follower counts and interaction patterns.
 Relationship Mapping: Visualize following/follower dynamics.
 
-Follower Analysis
+Follower Analysis:
+
 Shared Interest Detection: Using the same topic classification but on followers to find shared interests between the analysed user and its followers.
 Interactive Heatmaps: Shared interests will be represented as a heatmap.
 
 Technology Stack
+
 Frontend: Streamlit
 API Integration: atproto (Bluesky), Hugging Face Inference API
 Data Processing: pandas, NetworkX
