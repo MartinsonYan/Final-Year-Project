@@ -5,10 +5,10 @@ A social media analytics dashboard that provides deep insights into user profile
 
 ### Profile Analysis:
 
--Profile Summaries: Create detailed summaries about user accounts using HuggingFace AI models.
--Content Uniqueness Scoring: Determine the uniqueness and distinctiveness of user content From 1-10, 1 being not unique and distinctive and 10 being highly unique and distinctive.
--Topic Classification: Uses zero-shot classification to help categorise posts into predefined topics. 
--Visual Topic Distribution: Bar Chart to showcase content themes.
+- Profile Summaries: Create detailed summaries about user accounts using HuggingFace AI models.
+- Content Uniqueness Scoring: Determine the uniqueness and distinctiveness of user content From 1-10, 1 being not unique and distinctive and 10 being highly unique and distinctive.
+- Topic Classification: Uses zero-shot classification to help categorise posts into predefined topics. 
+- Visual Topic Distribution: Bar Chart to showcase content themes.
 
 ### Network Analysis:
 
